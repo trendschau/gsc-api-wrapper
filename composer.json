@@ -4,6 +4,14 @@
     "require": {
         "google/apiclient": "^2.0.0@RC"
     },
+    "scripts": {
+        "pre-autoload-dump": "Google\\Task\\Composer::cleanup"
+    },
+    "extra": {
+        "google/apiclient-services": [
+            "Webmasters"
+        ]
+    },
     "authors": [
         {
             "name": "Hannes Kirsman",

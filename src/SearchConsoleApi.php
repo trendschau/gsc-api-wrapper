@@ -85,15 +85,18 @@ class SearchConsoleApi extends Google_Service_Webmasters {
     $this->query->setRowLimit(self::WEBMASTERS_ROW_LIMIT);
     $this->query->setStartRow(0);
     $this->queryOptions = $query_options;
-    if (isset($query_options['setDimensionFilterGroups'])) {
-      $filter = new Google_Service_Webmasters_ApiDimensionFilter();
-      $filter->setDimension($query_options['setDimensionFilterGroups']['filters']['dimension']);
-      $filter->setOperator($query_options['setDimensionFilterGroups']['filters']['operator']);
-      $filter->setExpression($query_options['setDimensionFilterGroups']['filters']['expression']);
-
+    if (isset($query_options['setDimensionFilterGroups']))
+    {
+      $filters = [];
+      foreach ($query_options['setDimensionFilterGroups']['filters'] as $key => $group) {
+        $filters[$key] = new Google_Service_Webmasters_ApiDimensionFilter;
+        $filters[$key]->setDimension($group['dimension']);
+        $filters[$key]->setExpression($group['expression']);
+        $filters[$key]->setOperator($group['operator']);
+      }
       $filter_group = new Google_Service_Webmasters_ApiDimensionFilterGroup();
-      $filter_group->setFilters([$filter]);
-
+      $filter_group->setFilters($filters);
+     
       $this->query->setDimensionFilterGroups([$filter_group]);
     }
   }

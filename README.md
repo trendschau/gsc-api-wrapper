@@ -23,8 +23,7 @@ I changed the fork in two ways:
 * Go to  https://console.developers.google.com. 
 * There you have to create a project if you don't have it already
 * Enable the 'Google Search Console API' 
-* Create 'Service account key' (json format). 
-* Add this keyfile to your project root.
+* Create a 'Service account key' and download the keyfile in json format.
 
 ## Add service account to your gsc-account
 
@@ -33,13 +32,13 @@ I changed the fork in two ways:
 
 ## Initiate the script
 
-Initiate the script with
+If you add the keyfile ("Service account key") in the root folder, then initiate the script with
 
 ```
 $searchConsole = new SearchConsoleApi();
 ```
 
-You can add the keyfile to another place. Then you have to define a custom path like this:
+You can also add the keyfile to another folder. Then you have to define a custom path like this:
 
 ```
 $searchConsole = new SearchConsoleApi('/foo/bar/service-account.json');

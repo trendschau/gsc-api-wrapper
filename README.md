@@ -1,29 +1,61 @@
-# hkirsman/google-search-console
+# PHP wrapper for the google-search-console api
 
-Wrapper for google/apiclient to access and retrieve data from Google Search Console using PHP. You can find this project in both https://packagist.org/packages/hkirsman/google-search-console and https://github.com/hkirsman/hkirsman-google-search-console
+Wrapper for google/apiclient to access and retrieve data from Google Search Console using PHP. 
+
+## hkirshman/google-search-console
+
+This is a fork of  https://github.com/hkirsman/hkirsman-google-search-console
+
+I changed the fork in two ways:
+
+* The google api services are cleanup by composer so it contains only Webmastertools
+* The `setDimensionFilterGroups` accepts several dimension filters as an array, so you can filter for country and page, for example.
+
 
 ## Installation (using Composer)
 
-Add hkirsman/google-search-console to your project:
 
-```
-composer require hkirsman/google-search-console:dev-master
-```
+* Clone this repository
+* Enter composer update to install dependencies
 
-Get key from https://console.developers.google.com. There you have to create a project if you don't have it already, enable the 'Google Search Console API' and create 'Service account key' (json format). Add this keyfile to your project root or define custom path like this:
-```
-$searchConsole = new SearchConsoleApi('/foo/bar/service-account.json');
-```
-instead of just
+## Setup google api credentials
+
+* Go to  https://console.developers.google.com. 
+* There you have to create a project if you don't have it already
+* Enable the 'Google Search Console API' 
+* Create 'Service account key' (json format). 
+* Add this keyfile to your project root.
+
+## Add service account to your gsc-account
+
+* Get a Service account ID like XXXX@developer.gserviceaccount.com in the developer console.
+* Add it as a new user in the https://www.google.com/webmasters/tools/.
+
+## Initiate the script
+
+Initiate the script with
+
 ```
 $searchConsole = new SearchConsoleApi();
 ```
 
-You'll also have to get Service account ID (XXXX@developer.gserviceaccount.com) and add it as user in the https://www.google.com/webmasters/tools/.
+You can add the keyfile to another place. Then you have to define a custom path like this:
+
+```
+$searchConsole = new SearchConsoleApi('/foo/bar/service-account.json');
+```
 
 ## Example
 
-Try this example file. Replace `http://www.example.com/` with your url and also `'expression' => '/SUBPATH/',`
+Try this example file. 
+
+Replace 
+
+* `http://www.example.com/` with your url 
+* `'expression' => '/SUBPATH/',` with a subpath
+* `'expression' => 'FRA',` with a language code
+
+See API documentation from google: https://developers.google.com/webmaster-tools/v1/searchanalytics/query
 
 ```php
 <?php
@@ -37,13 +69,20 @@ $options = SearchConsoleApi::getDefaultOptions();
 $options['site_url'] = 'http://www.example.com/';
 $options['start_date'] = date('Y-m-d', strtotime("-3 days"));;
 $options['end_date'] = date('Y-m-d', strtotime("-3 days"));;
-$options['setDimensionFilterGroups'] = array(
-  'filters' => array (
-    'dimension' => 'page',
-    'operator' => 'contains',
-    'expression' => '/SUBPATH/',
-  ),
-);
+$options['setDimensionFilterGroups'] = [
+  'filters' => [
+      [
+        'dimension'   => 'page',
+        'operator'    => 'contains',
+        'expression'  => '/SUBPATH/',
+      ],
+      [
+        'dimension'   => 'country',
+        'operator'    => 'equals',
+        'expression'  => 'FRA',
+      ]      
+  ]
+];
 
 $rows = $searchConsole->getRows($options);
 print_r($rows);

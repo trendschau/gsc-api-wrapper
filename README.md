@@ -1,19 +1,12 @@
 # PHP wrapper for the google-search-console api
 
-Wrapper for google/apiclient to access and retrieve data from Google Search Console using PHP. 
-
-## hkirshman/google-search-console
+Wrapper for google/apiclient to access and retrieve data from Google Search Console using PHP.
 
 This is a fork of  https://github.com/hkirsman/hkirsman-google-search-console
 
-I changed the fork in two ways:
-
-* The google api services are cleanup by composer so it contains only Webmastertools
-* The `setDimensionFilterGroups` accepts several dimension filters as an array, so you can filter for country and page, for example.
-
+MODIFIED for private use, this might not suite your requirements, it is not a fully featured wrapper!!!
 
 ## Installation (using Composer)
-
 
 * Clone this repository
 * Enter composer update to install dependencies

@@ -108,85 +108,20 @@ class SearchConsoleApi extends Google_Service_Webmasters {
    * @return array
    */
   public function getRows($options) {
-    $data = [];
-    $items = [];
-    $row_count = 0;
-    $request_count = 0;
-
     $this->initNewConnection();
     $this->setQueryOptions($options);
 
-    // Start a timer.
-    $start = microtime(TRUE);
+    // Ask Google for data.
+    try {
+      $result = $this->searchanalytics->query($options['site_url'], $this->query);
+    }
+    catch (\Google_Service_Exception $e) {
+      return $e;
+    }
 
-    do {
-      $request_count++;
+    $rows = $result->getRows();
 
-      // Ask Google for data.
-      try {
-        $result = $this->searchanalytics->query($options['site_url'], $this->query);
-      }
-      catch (\Google_Service_Exception $e) {
-        break;
-      }
-
-      $rows = $result->getRows();
-      $row_count += count($rows);
-
-      // Iterate all rows and fill items array.
-      foreach ($rows as $row) {
-        // Extract dimensions (see $query_options_base above) values from rows.
-        $date = $row->keys[0];
-        $device = $row->keys[1];
-        $url = $row->keys[2];
-        $keyword = $row->keys[3];
-        $country = $row->keys[4];
-
-        if (!isset($items[$url])) {
-          $items[$url] = [
-            'url' => $url,
-            'search_console' => [],
-          ];
-        }
-
-        // Prepare data for Elasticsearch record.
-        $items[$url]['search_console'][] = [
-          'date' => $date,
-          'query' => $keyword,
-          'clicks' => $row->clicks,
-          'impressions' => $row->impressions,
-          'avg_position' => round($row->position, 2),
-          'device' => $device,
-          'country' => $country,
-        ];
-      }
-
-      // Calculating the offset for the next run.
-      $new_offset = $this->query->getStartRow() + count($rows);
-
-      // Set the new start row for the next query.
-      $this->query->setStartRow($new_offset);
-    } while (count($rows));
-
-    // Stop the timer and round the result.
-    $elapsed = round(microtime(TRUE) - $start, 3);
-
-    // Make items in search_console unique.
-    $items_unique = array_map(function ($item) {
-      $item['search_console'] = array_values(array_unique($item['search_console'], SORT_REGULAR));
-
-      return $item;
-    }, $items);
-
-    $data += [
-      'date' => $options['start_date'],
-      'time' => $elapsed,
-      'items' => $items_unique,
-      'row_count' => $row_count,
-      'request_count' => $request_count,
-    ];
-
-    return $data;
+    return $rows;
   }
 
 }
